@@ -69,7 +69,7 @@ export default function Dashboard() {
 
         <div className="space-y-4">
           <section className="card p-5">
-            <h2 className="font-bold">{t("Due for review")} <span className="text-slate-400">({st.dueForReview.length})</span></h2>
+            <h2 className="font-bold">{t("Due for review")} <span className="text-slate-500">({st.dueForReview.length})</span></h2>
             {st.dueForReview.length === 0 ? (
               <p className="mt-2 text-sm text-slate-500">{t("Nothing due. Nice.")}</p>
             ) : (

@@ -38,7 +38,8 @@ export async function initLang() {
   if (lang !== 'he') return
   try {
     await loadHe()
-  } catch {
+  } catch (e) {
+    console.error('BetBoard: could not load Hebrew', e)
     lang = 'en'
     apply()
   }

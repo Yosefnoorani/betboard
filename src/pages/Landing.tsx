@@ -90,7 +90,7 @@ function Waitlist({ plan }: { plan: string }) {
       <Button type="submit">{t("Join waitlist")}</Button>
     </form>
     {errEl}
-    {count > 0 && <p className="mt-2 text-xs text-slate-400">{t(count === 1 ? '{n} signup saved in this browser' : '{n} signups saved in this browser', { n: count })}</p>}
+    {count > 0 && <p className="mt-2 text-xs text-slate-500">{t(count === 1 ? '{n} signup saved in this browser' : '{n} signups saved in this browser', { n: count })}</p>}
     </>
   )
 }
@@ -103,6 +103,7 @@ export default function Landing({ scrollTo }: { scrollTo?: string }) {
 
   return (
     <div className="min-h-screen bg-white">
+      <main>
       <section className="grad-bg relative overflow-hidden text-white">
         <SiteNav dark />
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.15fr_.85fr] lg:pb-28 lg:pt-16">
@@ -175,7 +176,7 @@ export default function Landing({ scrollTo }: { scrollTo?: string }) {
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {STEPS.map((s) => (
               <div key={s.n} className="card relative overflow-hidden p-6">
-                <div className="text-5xl font-black text-brand-100">{s.n}</div>
+                <div className="text-5xl font-black text-brand-600" aria-hidden="true">{s.n}</div>
                 <h3 className="mt-2 text-lg font-bold">{t(s.t)}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-600">{t(s.b)}</p>
               </div>
@@ -246,7 +247,7 @@ export default function Landing({ scrollTo }: { scrollTo?: string }) {
             <h3 className="font-bold">{t('Join the {plan} waitlist', { plan: t(plan) })}</h3>
             <div className="flex gap-1 rounded-lg bg-slate-100 p-1 text-xs" role="group" aria-label={t("Plan")}>
               {['Pro', 'Team'].map((p) => (
-                <button key={p} onClick={() => setPlan(p)} aria-pressed={plan === p} className={cx('focus-ring rounded-md px-2 py-1 font-semibold', plan === p ? 'bg-white shadow-sm' : 'text-slate-500')}>{t(p)}</button>
+                <button key={p} onClick={() => setPlan(p)} aria-pressed={plan === p} className={cx('focus-ring rounded-md px-2 py-1 font-semibold', plan === p ? 'bg-white shadow-sm' : 'text-slate-600')}>{t(p)}</button>
               ))}
             </div>
           </div>
@@ -279,6 +280,7 @@ export default function Landing({ scrollTo }: { scrollTo?: string }) {
           <LinkButton to="/test" variant="light" size="lg" className="mt-8">{t("Take the PM Judgment Score test →")}</LinkButton>
         </div>
       </section>
+      </main>
       <SiteFooter />
     </div>
   )

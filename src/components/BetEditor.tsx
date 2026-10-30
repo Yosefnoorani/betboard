@@ -83,7 +83,7 @@ export function BetEditor({ open, onClose, initial }: { open: boolean; onClose: 
             <div className="mt-2 grid grid-cols-3 gap-2 text-center text-xs">
               <div className="rounded-lg bg-slate-50 p-2"><div className="font-bold tabular-nums">{fit.alignment}/60</div>{t("alignment")}</div>
               <div className="rounded-lg bg-slate-50 p-2"><div className="font-bold tabular-nums">{fit.quality}/40</div>{t("bet quality")}</div>
-              <div className="rounded-lg bg-slate-50 p-2"><div className="font-bold tabular-nums text-rose-600">−{fit.penalty}</div>{t("non-goals")}</div>
+              <div className="rounded-lg bg-slate-50 p-2"><div className="font-bold tabular-nums text-rose-700">−{fit.penalty}</div>{t("non-goals")}</div>
             </div>
             <ul className="mt-3 space-y-1.5 text-sm">
               {fit.flags.map((f) => (

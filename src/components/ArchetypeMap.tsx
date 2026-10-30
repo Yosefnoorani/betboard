@@ -44,7 +44,7 @@ export function ArchetypeMap({ mine, friend, history = [], dark = true }: { mine
               </div>
               <p className={cx('mt-1 text-xs leading-snug', dark ? 'text-white/60' : 'text-slate-500')}>{t(a.tagline)}</p>
               <div className="mt-2 flex flex-wrap gap-1">
-                {isMine && <span className="rounded-md bg-brand-500 px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">{t("You")}</span>}
+                {isMine && <span className="rounded-md bg-brand-600 px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">{t("You")}</span>}
                 {isFriend && <span className="rounded-md bg-cyan-500 px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">{friend?.n || t('Challenger')}</span>}
                 {seen.has(k) && !isMine && <span className={cx('rounded-md px-1.5 py-0.5 text-[10px] font-semibold', dark ? 'bg-white/10 text-white/70' : 'bg-slate-200 text-slate-600')}>{t('Seen ×{n}', { n: seen.get(k) ?? 0 })}</span>}
               </div>
@@ -52,7 +52,7 @@ export function ArchetypeMap({ mine, friend, history = [], dark = true }: { mine
           )
         })}
       </ul>
-      <p className={cx('mt-3 text-xs', dark ? 'text-white/45' : 'text-slate-400')}>{t("Your archetype comes from accuracy × confidence gap. Retake a different pack, or challenge a colleague and compare.")}</p>
+      <p className={cx('mt-3 text-xs', dark ? 'text-white/70' : 'text-slate-500')}>{t("Your archetype comes from accuracy × confidence gap. Retake a different pack, or challenge a colleague and compare.")}</p>
     </section>
   )
 }

@@ -201,7 +201,7 @@ function Question({
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10" role="progressbar" aria-valuenow={index} aria-valuemin={0} aria-valuemax={total} aria-label={t("Progress")}>
         <div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-cyan-400 transition-all" style={{ width: `${(index / total) * 100}%` }} />
       </div>
-      <h2 id="qtext" className="mt-8 text-2xl font-bold leading-snug sm:text-3xl">{lq(shown.q).prompt}</h2>
+      <h1 id="qtext" className="mt-8 text-2xl font-bold leading-snug sm:text-3xl">{lq(shown.q).prompt}</h1>
       <div className="mt-6 grid gap-3" role="radiogroup" aria-label={t("Answer options")}>
         {shown.order.map((optIdx, k) => (
           <button

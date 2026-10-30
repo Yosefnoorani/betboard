@@ -55,8 +55,8 @@ export default function Bets() {
         <div className="card flex flex-col gap-3 p-3 sm:flex-row sm:items-center">
           <div className="flex gap-1 overflow-x-auto rounded-xl bg-slate-100 p-1" role="tablist" aria-label={t("Filter bets")}>
             {(['all', 'open', 'resolved', 'killed'] as Filter[]).map((f) => (
-              <button key={f} role="tab" aria-selected={filter === f} onClick={() => setFilter(f)} className={cx('focus-ring whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold capitalize', filter === f ? 'bg-white shadow-sm' : 'text-slate-500 hover:text-slate-800')}>
-                {t(f)} <span className="ms-1 text-xs tabular-nums text-slate-400">{counts[f]}</span>
+              <button key={f} role="tab" aria-selected={filter === f} onClick={() => setFilter(f)} className={cx('focus-ring whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold capitalize', filter === f ? 'bg-white shadow-sm' : 'text-slate-600 hover:text-slate-800')}>
+                {t(f)} <span className="ms-1 text-xs tabular-nums text-slate-500">{counts[f]}</span>
               </button>
             ))}
           </div>
@@ -84,7 +84,7 @@ export default function Bets() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="font-bold">{b.title}</h3>
+                      <h2 className="font-bold">{b.title}</h2>
                       {b.tags.map((t) => <Badge key={t}>{t}</Badge>)}
                     </div>
                     {b.hypothesis && <p className="mt-1 line-clamp-2 text-sm text-slate-600">{b.hypothesis}</p>}

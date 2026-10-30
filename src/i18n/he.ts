@@ -471,6 +471,8 @@ export const HE: Record<string, string> = {
   "Write your strategy as a constitution that can be checked. Bets that violate a non-goal, have no metric or can never be killed get flagged automatically, and the overload meter shows when you have taken on too much.": "כתבו את האסטרטגיה כחוקה שאפשר לבדוק. הימורים שמפרים אי-מטרה, שאין להם מדד או שאי אפשר להרוג אותם מסומנים אוטומטית, ומד העומס מראה מתי לקחתם על עצמכם יותר מדי.",
   "Yes. Every question is about a public product or tech-business fact, and every answer links to its source. You see them all when you review your results.": "כן. כל שאלה עוסקת בעובדה ציבורית על מוצר או עסקי טכנולוגיה, ולכל תשובה יש קישור למקור. רואים את כולם בסקירת התוצאות.",
   "You": "אתם",
+  "Sidebar": "סרגל צד",
+  "Demo notice": "הודעת דמו",
   "You are accurate and well calibrated. When you say 80%, you are right about 80% of the time. Stakeholders can treat your forecasts as real probabilities.": "אתם מדויקים ומכוילים היטב. כשאתם אומרים 80%, אתם צודקים בערך ב-80% מהמקרים. בעלי העניין יכולים להתייחס לתחזיות שלכם כהסתברויות אמיתיות.",
   "You are calibrated when your stated confidence matches reality: of all the things you call 70% likely, about 70% happen. It is one of the best-studied measures of forecasting skill, and it is exactly what a PM is paid for.": "אתם מכוילים כשהביטחון שאתם מצהירים תואם את המציאות: מכל הדברים שאתם אומרים שהם בסיכוי 70%, בערך 70% קורים. זה אחד המדדים הנחקרים ביותר למיומנות חיזוי, וזה בדיוק מה שמשלמים ל-PM עליו.",
   "You are looking at demo data": "אתם צופים בנתוני הדגמה",

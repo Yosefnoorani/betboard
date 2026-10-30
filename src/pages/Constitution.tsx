@@ -85,7 +85,7 @@ export default function Constitution() {
           })}
         </div>
 
-        <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
+        <div className="space-y-4 lg:sticky lg:top-6 lg:self-start">
           <section className="card p-5">
             <h2 className="font-bold">{t("Test an idea")}</h2>
             <p className="mt-0.5 text-xs text-slate-500">{t("Type any feature idea and see how it scores against your constitution.")}</p>
@@ -127,7 +127,7 @@ export default function Constitution() {
               <li><strong>{t("Non-goal penalty:")}</strong> {t("weight × 8 for each non-goal touched (max 40).")}</li>
             </ul>
           </section>
-        </aside>
+        </div>
       </div>
     </>
   )

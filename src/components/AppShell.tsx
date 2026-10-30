@@ -27,7 +27,7 @@ export default function AppShell() {
   return (
     <div className="min-h-screen bg-slate-50">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:start-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">{t("Skip to content")}</a>
-      <aside className="fixed inset-y-0 start-0 z-30 hidden w-60 flex-col border-e border-slate-200 bg-white px-3 py-4 lg:flex">
+      <aside aria-label={t("Sidebar")} className="fixed inset-y-0 start-0 z-30 hidden w-60 flex-col border-e border-slate-200 bg-white px-3 py-4 lg:flex">
         <Link to="/" className="focus-ring mb-6 rounded-lg px-2"><Logo /></Link>
         <nav className="flex flex-1 flex-col gap-1" aria-label={t("App")}>
           {NAV.map((n) => (
@@ -62,12 +62,12 @@ export default function AppShell() {
 
       <div className="lg:ps-60">
         {data.isDemo && (
-          <div className="no-print border-b border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-900">
+          <section aria-label={t("Demo notice")} className="no-print border-b border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-900">
             <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
               <span><strong>{t("Demo workspace.")}</strong> {t("You're looking at sample bets for a fictional company. Explore freely: everything is stored only in your browser.")}</span>
               <Button size="sm" variant="secondary" onClick={() => confirm(t('Clear the demo data and start with an empty ledger?')) && startFresh()}>{t("Start my own ledger")}</Button>
             </div>
-          </div>
+          </section>
         )}
         <main id="main" className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
           <Outlet />
