@@ -22,17 +22,17 @@ const TIERS = [
     name: 'Free',
     price: '$0',
     per: 'forever',
-    blurb: 'For PMs who want to know their score',
-    features: ['PM Judgment Score test + share card', 'Bet Ledger (local, unlimited bets)', 'Product Constitution & fit scores', 'Calibration dashboard', 'Bring your own AI key'],
+    blurb: 'Everything that works today',
+    features: ['PM Judgment Score test, share card and challenge links', 'Bet Ledger stored in this browser', 'Product Constitution & fit scores', 'Calibration dashboard & public track-record link', 'Bring your own AI key'],
     cta: 'Start free',
-    to: '/app',
+    to: '/start',
   },
   {
     name: 'Pro',
     price: '$12',
     per: 'per month',
     blurb: 'For PMs building a provable track record',
-    features: ['Everything in Free', 'Cloud sync across devices', 'Built-in AI assist (no key needed)', 'Analytics auto-resolve (Amplitude, Mixpanel, GA4)', 'Public judgment profile & PDF track record', 'Monthly calibration coaching report'],
+    features: ['Everything in Free', 'Unlimited bets, synced across devices', 'Built-in AI assist (no key needed)', 'Team constitution your whole team can bet against', 'Calibration history: your score quarter by quarter', 'Monthly calibration coaching report'],
     cta: 'Join the Pro waitlist',
     highlight: true,
   },
@@ -41,9 +41,16 @@ const TIERS = [
     price: '$29',
     per: 'per seat / month',
     blurb: 'For product orgs that want to decide faster',
-    features: ['Everything in Pro', 'Shared constitution & portfolio view', 'Capacity planning & overload alerts', 'Agent/PR gate: check AI-built work against strategy', 'Leaderboards & calibration for promotions', 'SSO, admin & audit log'],
+    features: ['Everything in Pro', 'Portfolio view across every PM', 'Capacity planning & overload alerts', 'Agent/PR gate: check AI-built work against strategy', 'Analytics auto-resolve (Amplitude, Mixpanel, GA4)', 'SSO, admin & audit log'],
     cta: 'Join the Team waitlist',
   },
+]
+
+const WHY_PRO = [
+  { icon: '♾️', title: 'Unlimited bets, everywhere', pain: 'Today your ledger lives in one browser. Clear your cache and your track record is gone.', fix: 'Pro keeps every bet you ever made, synced across laptop and phone.' },
+  { icon: '✨', title: 'AI assist built in', pain: 'Turning a messy idea into a metric, target and kill criteria takes a blank-page half hour.', fix: 'Paste the idea and Pro drafts the whole bet. No API key, no setup.' },
+  { icon: '🧭', title: 'A team constitution', pain: 'Your strategy doc says one thing and the roadmap does another, and nobody notices until review.', fix: 'One shared constitution that every bet on the team is fit-scored against.' },
+  { icon: '📈', title: 'Calibration history', pain: 'One score is a snapshot. A promotion case needs a trend.', fix: 'See your judgment quarter by quarter, and how far you have come since your first bet.' },
 ]
 
 const FAQ = [
@@ -191,7 +198,20 @@ export default function Landing({ scrollTo }: { scrollTo?: string }) {
       <section id="pricing" className="mx-auto max-w-6xl scroll-mt-6 px-4 py-20 sm:px-6">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Simple pricing</h2>
-          <p className="mt-2 text-slate-600">Free works today. Pro and Team are <strong>planned</strong>: join the waitlist for early access. No payments are taken.</p>
+          <p className="mt-2 text-slate-600">Free works today, with no signup. Pro and Team are <strong>planned</strong>: join the waitlist for early access. No payments are taken.</p>
+        </div>
+        <div className="mt-10">
+          <h3 className="text-center text-sm font-bold uppercase tracking-wider text-brand-700">Why pay for Pro? <span className="ms-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] text-slate-600">planned</span></h3>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {WHY_PRO.map((w) => (
+              <div key={w.title} className="card p-5">
+                <div className="text-2xl" aria-hidden>{w.icon}</div>
+                <h4 className="mt-2 font-bold">{w.title}</h4>
+                <p className="mt-2 text-sm text-slate-500">{w.pain}</p>
+                <p className="mt-2 text-sm font-medium text-slate-800">{w.fix}</p>
+              </div>
+            ))}
+          </div>
         </div>
         <div className="mt-10 grid gap-5 lg:grid-cols-3">
           {TIERS.map((t) => (
