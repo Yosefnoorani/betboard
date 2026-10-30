@@ -98,7 +98,7 @@ export default function Dashboard() {
             </ul>
           </section>
 
-          <section className="card grad-bg p-5 text-white">
+          <section className="grad-bg rounded-2xl p-5 text-white shadow-sm">
             <h2 className="font-bold">PM Judgment Score test</h2>
             <p className="mt-1 text-sm text-white/75">
               {lastQuiz ? `Your last score: ${lastQuiz.score}/100 (${ARCHETYPES[lastQuiz.archetype]?.name ?? lastQuiz.archetype}). Can you beat it?` : 'Benchmark your calibration in 3 minutes with 15 real product-history questions.'}

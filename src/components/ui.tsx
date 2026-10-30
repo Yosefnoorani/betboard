@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useId, useRef } from 'react'
 import { Link } from 'react-router-dom'
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'light'
@@ -112,16 +112,17 @@ export function Modal({ open, onClose, title, children, wide }: { open: boolean;
 }
 
 export function Logo({ light }: { light?: boolean }) {
+  const gid = 'lg' + useId().replace(/:/g, '')
   return (
     <span className="inline-flex items-center gap-2 font-extrabold tracking-tight">
       <svg width="28" height="28" viewBox="0 0 64 64" aria-hidden>
         <defs>
-          <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+          <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#7c3aed" />
             <stop offset="1" stopColor="#06b6d4" />
           </linearGradient>
         </defs>
-        <rect width="64" height="64" rx="16" fill="url(#lg)" />
+        <rect width="64" height="64" rx="16" fill={`url(#${gid})`} />
         <path d="M14 46 L26 34 L34 40 L50 20" stroke="#fff" strokeWidth="6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         <circle cx="50" cy="20" r="5" fill="#fff" />
       </svg>

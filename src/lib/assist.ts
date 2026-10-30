@@ -73,12 +73,20 @@ export function heuristicAssist(raw: string, today = new Date()): BetDraft {
   const reviewDate = addDays(today, weeks * 7)
   const lowerBar = pct ? `${Math.max(1, Math.round(parseFloat(pct[1].replace(/^[+-]/, '')) / 3))}${pct[2] === 'percent' ? '%' : pct[2]}` : '3%'
 
-  const assumptions = text
+  const who = audience ? audience[0].toUpperCase() + audience.slice(1) : 'Target users'
+  const claims = text
     .split(/(?<=[.!?])\s+|\n/)
     .map((s) => s.trim())
-    .filter((s) => /\b(assum|believe|think|should|will|expect|probably|likely|because)\b/i.test(s))
-    .slice(0, 4)
-  if (assumptions.length === 0) assumptions.push(`${audience ? audience[0].toUpperCase() + audience.slice(1) : 'Users'} have this problem often enough to change behaviour`)
+    .filter((s) => /\b(assum|believe|think|expect|probably|likely|because|asked|stuck|complain|request)/i.test(s))
+    .slice(0, 1)
+    .map((s) => `Evidence holds up beyond anecdotes: “${s.replace(/[.]$/, '')}”`)
+  const assumptions = [
+    `${who} feel this problem often enough to change behaviour (value risk)`,
+    ...claims,
+    `People discover and understand the change without hand-holding (usability risk)`,
+    `The effect is big enough to move ${metric.toLowerCase()} by ${target}, not just a vanity metric (impact risk)`,
+    `It ships within ~${cost} person-weeks without crowding out a better bet (cost risk)`,
+  ].slice(0, 4)
 
   return {
     title,
