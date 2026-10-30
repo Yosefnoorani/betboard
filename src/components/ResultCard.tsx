@@ -1,61 +1,81 @@
 import { forwardRef } from 'react'
 import { ARCHETYPES, biasOf, scoreLabel } from '../lib/scoring'
-import { ScoreRing } from './ui'
+import { seedLabel } from '../lib/pack'
+import type { SharePayload } from '../lib/share'
 
-export interface SharePayload {
-  s: number // score
-  a: number // accuracy %
-  g: number // gap pts
-  k: string // archetype key
-  c: number // correct
-  t: number // total
-  n?: string // name
+export type { SharePayload } from '../lib/share'
+
+const siteHost = () => (typeof window === 'undefined' ? 'betboard' : (window.location.host + window.location.pathname).replace(/\/(index\.html)?$/, ''))
+
+const CAT_LABEL: Record<string, string> = { pivots: 'Pivots pack', launches: 'Launches pack', metrics: 'Deals & metrics pack', ai: 'AI-era pack' }
+
+function Meter({ label, value, color }: { label: string; value: number; color: string }) {
+  const v = Math.max(0, Math.min(100, Math.round(value)))
+  return (
+    <div>
+      <div className="flex justify-between text-[11px] font-semibold uppercase tracking-wider text-white/60">
+        <span>{label}</span>
+        <span className="tabular-nums text-white">{v}%</span>
+      </div>
+      <div className="mt-1 h-2 overflow-hidden rounded-full bg-white/10" dir="ltr">
+        <div className="h-full rounded-full" style={{ width: `${v}%`, background: color }} />
+      </div>
+    </div>
+  )
 }
 
-export const ResultCard = forwardRef<HTMLDivElement, { r: SharePayload }>(function ResultCard({ r }, ref) {
+export const ResultCard = forwardRef<HTMLDivElement, { r: SharePayload; vs?: { n?: string; s: number } }>(function ResultCard({ r, vs }, ref) {
   const arch = ARCHETYPES[r.k] ?? ARCHETYPES.navigator
   const bias = biasOf(r.g)
-  const biasText =
-    bias === 'calibrated' ? `Calibrated (within ${Math.abs(Math.round(r.g))} pts)` : bias === 'overconfident' ? `Overconfident by ${Math.round(r.g)} pts` : `Underconfident by ${Math.abs(Math.round(r.g))} pts`
+  const g = Math.round(r.g)
+  const biasText = bias === 'calibrated' ? `Calibrated · gap ${g > 0 ? '+' : ''}${g} pts` : bias === 'overconfident' ? `Overconfident by ${g} pts` : `Underconfident by ${Math.abs(g)} pts`
+  const wk = r.sd ? seedLabel(r.sd) : null
+  const pack = r.cat ? CAT_LABEL[r.cat] : wk ? `Week ${wk.week} pack` : 'Mixed pack'
   return (
     <div
       ref={ref}
-      className="relative w-full max-w-[560px] overflow-hidden rounded-3xl p-7 text-white sm:p-8"
-      style={{ background: 'radial-gradient(600px 300px at 0% 0%, rgba(124,58,237,.65), transparent 60%), radial-gradient(500px 300px at 100% 100%, rgba(6,182,212,.45), transparent 60%), #0b0b1a' }}
+      className="relative w-full max-w-[560px] overflow-hidden rounded-3xl p-7 text-white shadow-2xl sm:p-8"
+      style={{ background: 'radial-gradient(520px 320px at 0% 0%, rgba(124,58,237,.75), transparent 62%), radial-gradient(460px 300px at 100% 100%, rgba(6,182,212,.55), transparent 62%), #0b0b1a' }}
     >
       <div className="flex items-center justify-between">
-        <div className="text-xs font-bold uppercase tracking-[.2em] text-white/70">PM Judgment Score</div>
         <div className="flex items-center gap-1.5 text-sm font-extrabold">
-          <svg width="20" height="20" viewBox="0 0 64 64" aria-hidden><rect width="64" height="64" rx="16" fill="#fff" fillOpacity=".15" /><path d="M14 46 L26 34 L34 40 L50 20" stroke="#fff" strokeWidth="6" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <svg width="22" height="22" viewBox="0 0 64 64" aria-hidden><rect width="64" height="64" rx="16" fill="#fff" fillOpacity=".15" /><path d="M14 46 L26 34 L34 40 L50 20" stroke="#fff" strokeWidth="6" fill="none" strokeLinecap="round" strokeLinejoin="round" /></svg>
           BetBoard
         </div>
+        <div className="rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/80">{pack}</div>
       </div>
-      {r.n && <div className="mt-4 text-sm font-medium text-white/70">{r.n}</div>}
-      <div className="mt-5 flex items-center gap-6">
-        <ScoreRing value={r.s} size={132} stroke={11} dark label="/ 100" />
+
+      <div className="mt-6 flex items-end justify-between gap-4">
         <div className="min-w-0">
-          <div className="text-4xl" aria-hidden>{arch.emoji}</div>
-          <div className="mt-1 text-2xl font-extrabold leading-tight">{arch.name}</div>
-          <div className="mt-1 text-sm text-white/70">{arch.tagline}</div>
+          <div className="text-xs font-bold uppercase tracking-[.2em] text-white/60">{r.n ? `${r.n}'s PM Judgment Score` : 'PM Judgment Score'}</div>
+          <div className="mt-1 flex items-baseline gap-2" dir="ltr">
+            <span className="text-[88px] font-black leading-none tracking-tight tabular-nums">{r.s}</span>
+            <span className="text-2xl font-bold text-white/50">/100</span>
+          </div>
+          <div className="mt-1 text-sm font-semibold text-cyan-200">{scoreLabel(r.s)}</div>
+        </div>
+        <div className="shrink-0 text-right">
+          <div className="text-6xl leading-none" aria-hidden>{arch.emoji}</div>
         </div>
       </div>
-      <div className="mt-6 grid grid-cols-3 gap-2 text-center">
-        <div className="rounded-2xl bg-white/10 px-2 py-3">
-          <div className="text-lg font-extrabold tabular-nums">{r.c}/{r.t}</div>
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-white/60">correct</div>
+
+      <div className="mt-5 rounded-2xl bg-white/10 p-4">
+        <div className="text-xl font-extrabold leading-tight">{arch.name}</div>
+        <div className="mt-0.5 text-sm text-white/75">{arch.tagline}</div>
+        <div className="mt-4 grid gap-2.5">
+          <Meter label="Confidence" value={r.a + r.g} color="linear-gradient(90deg,#a78bfa,#7c3aed)" />
+          <Meter label={`Accuracy · ${r.c}/${r.t}`} value={r.a} color="linear-gradient(90deg,#67e8f9,#06b6d4)" />
         </div>
-        <div className="rounded-2xl bg-white/10 px-2 py-3">
-          <div className="text-lg font-extrabold tabular-nums">{r.g > 0 ? '+' : ''}{Math.round(r.g)}</div>
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-white/60">confidence gap</div>
-        </div>
-        <div className="rounded-2xl bg-white/10 px-2 py-3">
-          <div className="truncate text-lg font-extrabold">{scoreLabel(r.s).split(' ')[0]}</div>
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-white/60">level</div>
-        </div>
+        <div className="mt-2 text-xs text-white/60">{biasText}</div>
       </div>
-      <div className="mt-5 flex items-center justify-between text-xs text-white/60">
-        <span>{biasText}</span>
-        <span>Take the 3-min test · betboard</span>
+
+      <div className="mt-5 flex items-center justify-between gap-3 text-sm">
+        {vs ? (
+          <span className="font-bold">{r.s > vs.s ? `🏆 Beat ${vs.n || 'the challenger'} (${vs.s})` : r.s === vs.s ? `🤝 Tied ${vs.n || 'the challenger'} (${vs.s})` : `${vs.n || 'Challenger'} leads: ${vs.s}`}</span>
+        ) : (
+          <span className="font-bold">Can you beat {r.s}?</span>
+        )}
+        <span className="text-xs text-white/55">3-min test · {siteHost()}</span>
       </div>
     </div>
   )

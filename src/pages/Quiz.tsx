@@ -1,48 +1,42 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { SiteNav } from '../components/SiteNav'
 import { Button, LinkButton, cx } from '../components/ui'
-import { ResultCard, type SharePayload } from '../components/ResultCard'
+import { ResultCard } from '../components/ResultCard'
+import { ArchetypeMap } from '../components/ArchetypeMap'
 import { ShareActions } from '../components/ShareActions'
 import { CalibrationChart } from '../components/charts'
-import { QUESTIONS, QUIZ_LENGTH, type QuizQuestion } from '../data/quiz'
-import { answerToForecast, calibrationBuckets, scoreQuiz, type QuizAnswer, type QuizResult } from '../lib/scoring'
-import { setData } from '../lib/store'
-import { appUrl, encodeShare } from '../lib/share'
+import { QUESTIONS, QUIZ_LENGTH, type QuizCategory } from '../data/quiz'
+import { buildRound, CATEGORIES, isoWeek, randomSeed, weekSeed, type RoundItem, type RoundSpec } from '../lib/pack'
+import { ARCHETYPES, answerToForecast, calibrationBuckets, scoreQuiz, type QuizAnswer, type QuizResult } from '../lib/scoring'
+import { setData, useData } from '../lib/store'
+import { appUrl, decodeChallenge, encodeShare, shareText, toChallenge, type ChallengePayload, type SharePayload } from '../lib/share'
 
-interface Shown {
-  q: QuizQuestion
-  /** display order: indices into q.options */
-  order: [number, number]
-}
+type Shown = RoundItem
 
-function shuffle<T>(arr: T[]): T[] {
-  const a = arr.slice()
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[a[i], a[j]] = [a[j], a[i]]
-  }
-  return a
-}
+const CAT_NAMES: Record<QuizCategory, string> = { pivots: 'Pivots', launches: 'Launches', metrics: 'Deals & metrics', ai: 'AI era' }
 
-const makeRound = (): Shown[] =>
-  shuffle(QUESTIONS)
-    .slice(0, QUIZ_LENGTH)
-    .map((q) => ({ q, order: Math.random() < 0.5 ? [0, 1] : [1, 0] }))
+const makeRound = (spec: RoundSpec): Shown[] => buildRound(QUESTIONS, spec, QUIZ_LENGTH)
 
 const CONF_STEPS = [50, 60, 70, 80, 90, 100]
 
 export default function Quiz() {
+  const [params] = useSearchParams()
+  const challenge = useMemo(() => decodeChallenge(params.get('c')), [params])
+  const [spec, setSpec] = useState<RoundSpec>(() =>
+    challenge ? { seed: challenge.sd, ...(challenge.cat && (CATEGORIES as string[]).includes(challenge.cat) ? { cat: challenge.cat as QuizCategory } : {}) } : { seed: weekSeed() },
+  )
   const [phase, setPhase] = useState<'intro' | 'play' | 'done'>('intro')
-  const [round, setRound] = useState<Shown[]>(makeRound)
+  const [round, setRound] = useState<Shown[]>(() => makeRound(spec))
   const [i, setI] = useState(0)
   const [choice, setChoice] = useState<number | null>(null)
   const [conf, setConf] = useState(70)
   const [answers, setAnswers] = useState<(QuizAnswer & { chosen: number })[]>([])
   const [name, setName] = useState('')
 
-  const start = () => {
-    setRound(makeRound())
+  const start = (next: RoundSpec = spec) => {
+    setSpec(next)
+    setRound(makeRound(next))
     setI(0)
     setAnswers([])
     setChoice(null)
@@ -82,7 +76,7 @@ export default function Quiz() {
     <div className="min-h-screen grad-bg text-white">
       <SiteNav dark />
       <main className="mx-auto max-w-3xl px-4 pb-20 pt-4 sm:px-6">
-        {phase === 'intro' && <Intro onStart={start} name={name} setName={setName} />}
+        {phase === 'intro' && <Intro onStart={start} name={name} setName={setName} spec={spec} setSpec={setSpec} challenge={challenge} />}
         {phase === 'play' && (
           <Question
             key={i}
@@ -96,15 +90,53 @@ export default function Quiz() {
             onNext={next}
           />
         )}
-        {phase === 'done' && <Results answers={answers} round={round} name={name} onRetake={start} />}
+        {phase === 'done' && <Results answers={answers} round={round} name={name} spec={spec} challenge={challenge} onRetake={() => start({ seed: randomSeed(), ...(spec.cat ? { cat: spec.cat } : {}) })} />}
       </main>
     </div>
   )
 }
 
-function Intro({ onStart, name, setName }: { onStart: () => void; name: string; setName: (s: string) => void }) {
+function PackPicker({ spec, setSpec }: { spec: RoundSpec; setSpec: (s: RoundSpec) => void }) {
+  const wk = isoWeek()
+  const ws = weekSeed()
+  const opts: { key: string; label: string; spec: RoundSpec }[] = [
+    { key: 'week', label: `This week's pack · W${wk.week}`, spec: { seed: ws } },
+    ...CATEGORIES.map((c) => ({ key: c, label: CAT_NAMES[c], spec: { seed: ws, cat: c } })),
+  ]
+  const active = spec.cat ?? (spec.seed === ws ? 'week' : '')
+  return (
+    <div className="mx-auto mt-8 max-w-2xl">
+      <div className="text-xs font-semibold uppercase tracking-wider text-white/50" id="pack-l">Choose a pack</div>
+      <div className="mt-2 flex flex-wrap justify-center gap-2" role="radiogroup" aria-labelledby="pack-l">
+        {opts.map((o) => (
+          <button
+            key={o.key}
+            role="radio"
+            aria-checked={active === o.key}
+            onClick={() => setSpec(o.spec)}
+            className={cx('focus-ring rounded-full border px-3 py-1.5 text-sm font-semibold transition', active === o.key ? 'border-white bg-white text-ink' : 'border-white/15 bg-white/5 text-white/80 hover:bg-white/10')}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+      <p className="mt-2 text-xs text-white/45">Everyone gets the same weekly pack, so scores are comparable. New pack every Monday (ISO week).</p>
+    </div>
+  )
+}
+
+function Intro({ onStart, name, setName, spec, setSpec, challenge }: { onStart: (s?: RoundSpec) => void; name: string; setName: (s: string) => void; spec: RoundSpec; setSpec: (s: RoundSpec) => void; challenge: ChallengePayload | null }) {
   return (
     <section className="rise pt-8 text-center sm:pt-14">
+      {challenge && (
+        <div className="mx-auto mb-6 max-w-xl rounded-2xl border border-cyan-300/30 bg-cyan-400/10 p-4 text-left" role="status">
+          <div className="text-xs font-bold uppercase tracking-wider text-cyan-200">Challenge accepted?</div>
+          <div className="mt-1 text-lg font-bold">
+            {challenge.n || 'A colleague'} scored <span className="text-cyan-200">{challenge.s}/100</span> as {(ARCHETYPES[challenge.k] ?? ARCHETYPES.navigator).emoji} {(ARCHETYPES[challenge.k] ?? ARCHETYPES.navigator).name}.
+          </div>
+          <div className="text-sm text-white/70">You get the exact same questions. Score to beat: {challenge.s}.</div>
+        </div>
+      )}
       <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/80">Free · 15 questions · ~3 minutes · no signup</span>
       <h1 className="mt-6 text-4xl font-extrabold tracking-tight sm:text-5xl">
         What's your <span className="grad-text">PM Judgment Score?</span>
@@ -128,8 +160,9 @@ function Intro({ onStart, name, setName }: { onStart: () => void; name: string; 
       <div className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row">
         <label htmlFor="nm" className="sr-only">Your name (optional, shown on your card)</label>
         <input id="nm" value={name} onChange={(e) => setName(e.target.value.slice(0, 40))} placeholder="Your name (optional, for your card)" className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white placeholder:text-white/40 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/40" />
-        <Button size="lg" variant="light" onClick={onStart} className="shrink-0">Start the test →</Button>
+        <Button size="lg" variant="light" onClick={() => onStart()} className="shrink-0">{challenge ? `Beat ${challenge.s} →` : 'Start the test →'}</Button>
       </div>
+      {!challenge && <PackPicker spec={spec} setSpec={setSpec} />}
       <p className="mt-4 text-xs text-white/45">Every answer comes with its source. Nothing leaves your browser.</p>
     </section>
   )
@@ -218,23 +251,64 @@ function biasCopy(r: QuizResult) {
   return `Your average confidence (${Math.round(r.meanConfidence * 100)}%) is within ${Math.abs(g)} points of your accuracy (${Math.round(r.accuracy * 100)}%). Your "how sure am I" signal is trustworthy, and that's the hard part.`
 }
 
-function Results({ answers, round, name, onRetake }: { answers: (QuizAnswer & { chosen: number })[]; round: Shown[]; name: string; onRetake: () => void }) {
+function ChallengeBox({ payload }: { payload: SharePayload }) {
+  const [copied, setCopied] = useState(false)
+  const ch = toChallenge(payload)
+  if (!ch) return null
+  const url = appUrl(`/c/${encodeShare(ch)}`)
+  const text = `I scored ${payload.s}/100 on the PM Judgment Score. Same 15 questions, can you beat me?`
+  const copy = async () => {
+    const full = `${text} ${url}`
+    try {
+      if (navigator.share) await navigator.share({ title: 'PM Judgment Score challenge', text, url })
+      else await navigator.clipboard.writeText(full)
+      setCopied(true)
+    } catch {
+      try {
+        await navigator.clipboard.writeText(full)
+        setCopied(true)
+      } catch {
+        window.prompt('Copy this challenge link', full)
+      }
+    }
+    setTimeout(() => setCopied(false), 2500)
+  }
+  return (
+    <div className="mt-6 flex flex-col items-center justify-between gap-3 rounded-2xl border border-cyan-300/25 bg-cyan-400/10 p-5 sm:flex-row">
+      <div>
+        <div className="font-bold">⚔️ Challenge a colleague</div>
+        <div className="text-sm text-white/70">They get your exact questions and see your score to beat: {payload.s}.</div>
+      </div>
+      <Button variant="light" onClick={copy} aria-live="polite" className="shrink-0">{copied ? 'Challenge link copied ✓' : 'Copy challenge link'}</Button>
+    </div>
+  )
+}
+
+function Results({ answers, round, name, spec, challenge, onRetake }: { answers: (QuizAnswer & { chosen: number })[]; round: Shown[]; name: string; spec: RoundSpec; challenge: ChallengePayload | null; onRetake: () => void }) {
   const r = useMemo(() => scoreQuiz(answers), [answers])
+  const data = useData()
   const cardRef = useRef<HTMLDivElement>(null)
-  const payload: SharePayload = { s: r.score, a: Math.round(r.accuracy * 100), g: r.gap, k: r.archetype.key, c: r.correct, t: r.total, ...(name.trim() ? { n: name.trim() } : {}) }
+  const payload: SharePayload = { s: r.score, a: Math.round(r.accuracy * 100), g: r.gap, k: r.archetype.key, c: r.correct, t: r.total, sd: spec.seed, ...(spec.cat ? { cat: spec.cat } : {}), ...(name.trim() ? { n: name.trim() } : {}) }
+  const vs = challenge ? { n: challenge.n, s: challenge.s } : undefined
   const url = appUrl(`/s/${encodeShare(payload)}`)
-  const text = `I scored ${r.score}/100 on the PM Judgment Score: "${r.archetype.name}" ${r.archetype.emoji}. AI made building cheap; judgment is the bottleneck. How calibrated are you?`
+  const text = shareText({ s: r.score, emoji: r.archetype.emoji, name: r.archetype.name }, vs)
   const buckets = calibrationBuckets(answers.map(answerToForecast), [0.5, 0.6, 0.7, 0.8, 0.9, 1])
 
   return (
     <section className="rise pt-6">
-      <h1 className="text-center text-3xl font-extrabold tracking-tight sm:text-4xl">Your PM Judgment Score</h1>
+      <h1 className="text-center text-3xl font-extrabold tracking-tight sm:text-4xl">
+        {vs ? (r.score > vs.s ? `You beat ${vs.n || 'your colleague'}! 🏆` : r.score === vs.s ? `Dead heat with ${vs.n || 'your colleague'} 🤝` : `${vs.n || 'Your colleague'} wins this round`) : 'Your PM Judgment Score'}
+      </h1>
       <p className="mt-2 text-center text-white/60">{r.label}</p>
       <div className="mt-8 flex justify-center">
-        <ResultCard ref={cardRef} r={payload} />
+        <ResultCard ref={cardRef} r={payload} vs={vs} />
       </div>
       <div className="mt-6 flex justify-center">
         <ShareActions cardRef={cardRef} url={url} text={text} filename={`pm-judgment-score-${r.score}.png`} />
+      </div>
+      <ChallengeBox payload={payload} />
+      <div className="mt-4">
+        <ArchetypeMap mine={r.archetype.key} friend={challenge ? { k: challenge.k, n: challenge.n } : undefined} history={data.quizHistory} />
       </div>
 
       <div className="mt-10 grid gap-4 md:grid-cols-2">
@@ -259,7 +333,7 @@ function Results({ answers, round, name, onRetake }: { answers: (QuizAnswer & { 
         <p className="mt-2 max-w-2xl text-white/85">Put probabilities on your actual initiatives, add kill criteria, and build a judgment track record you can show your manager. Free, in your browser.</p>
         <div className="mt-5 flex flex-wrap gap-3">
           <LinkButton to="/app/bets" variant="light">Start my Bet Ledger →</LinkButton>
-          <Button variant="ghost" className="text-white hover:bg-white/10" onClick={onRetake}>Retake with new questions</Button>
+          <Button variant="ghost" className="text-white hover:bg-white/10" onClick={onRetake}>Retake with a new mix</Button>
         </div>
       </div>
 

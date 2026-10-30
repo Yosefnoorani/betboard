@@ -28,6 +28,7 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/test" element={<Quiz />} />
         <Route path="/s/:data" element={<SharedResult />} />
+        <Route path="/c/:data" element={<SharedResult mode="challenge" />} />
         <Route path="/r/:data" element={<SharedRecord />} />
         <Route path="/app" element={<AppShell />}>
           <Route index element={<Dashboard />} />
