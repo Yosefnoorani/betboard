@@ -5,7 +5,7 @@ const STOP = new Set(
 export function tokenize(text: string): string[] {
   return text
     .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, ' ')
+    .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
     .split(/\s+/)
     .filter((w) => w.length > 2 && !STOP.has(w))
 }
@@ -29,7 +29,8 @@ export function mentions(haystack: string, keyword: string): boolean {
   const h = haystack.toLowerCase()
   const k = keyword.toLowerCase().trim()
   if (!k) return false
-  if (k.includes(' ')) return h.includes(k)
+  // phrases, and non-Latin scripts (e.g. Hebrew with attached prefixes), use substring match
+  if (k.includes(' ') || /[^a-z0-9\s.,;:!?'"()&/+-]/i.test(k)) return h.includes(k)
   const hs = new Set(tokenize(h).map(stem))
   return hs.has(stem(k))
 }

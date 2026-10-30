@@ -1,3 +1,5 @@
+import { t } from '../lib/i18n'
+import { lq } from '../lib/quizText'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { SiteNav } from '../components/SiteNav'
@@ -101,13 +103,13 @@ function PackPicker({ spec, setSpec }: { spec: RoundSpec; setSpec: (s: RoundSpec
   const wk = isoWeek()
   const ws = weekSeed()
   const opts: { key: string; label: string; spec: RoundSpec }[] = [
-    { key: 'week', label: `This week's pack · W${wk.week}`, spec: { seed: ws } },
-    ...CATEGORIES.map((c) => ({ key: c, label: CAT_NAMES[c], spec: { seed: ws, cat: c } })),
+    { key: 'week', label: t("This week's pack · W{w}", { w: wk.week }), spec: { seed: ws } },
+    ...CATEGORIES.map((c) => ({ key: c, label: t(CAT_NAMES[c]), spec: { seed: ws, cat: c } })),
   ]
   const active = spec.cat ?? (spec.seed === ws ? 'week' : '')
   return (
     <div className="mx-auto mt-8 max-w-2xl">
-      <div className="text-xs font-semibold uppercase tracking-wider text-white/50" id="pack-l">Choose a pack</div>
+      <div className="text-xs font-semibold uppercase tracking-wider text-white/50" id="pack-l">{t("Choose a pack")}</div>
       <div className="mt-2 flex flex-wrap justify-center gap-2" role="radiogroup" aria-labelledby="pack-l">
         {opts.map((o) => (
           <button
@@ -121,7 +123,7 @@ function PackPicker({ spec, setSpec }: { spec: RoundSpec; setSpec: (s: RoundSpec
           </button>
         ))}
       </div>
-      <p className="mt-2 text-xs text-white/45">Everyone gets the same weekly pack, so scores are comparable. New pack every Monday (ISO week).</p>
+      <p className="mt-2 text-xs text-white/45">{t("Everyone gets the same weekly pack, so scores are comparable. New pack every Monday (ISO week).")}</p>
     </div>
   )
 }
@@ -130,41 +132,41 @@ function Intro({ onStart, name, setName, spec, setSpec, challenge }: { onStart: 
   return (
     <section className="rise pt-8 text-center sm:pt-14">
       {challenge && (
-        <div className="mx-auto mb-6 max-w-xl rounded-2xl border border-cyan-300/30 bg-cyan-400/10 p-4 text-left" role="status">
-          <div className="text-xs font-bold uppercase tracking-wider text-cyan-200">Challenge accepted?</div>
+        <div className="mx-auto mb-6 max-w-xl rounded-2xl border border-cyan-300/30 bg-cyan-400/10 p-4 text-start" role="status">
+          <div className="text-xs font-bold uppercase tracking-wider text-cyan-200">{t("Challenge accepted?")}</div>
           <div className="mt-1 text-lg font-bold">
-            {challenge.n || 'A colleague'} scored <span className="text-cyan-200">{challenge.s}/100</span> as {(ARCHETYPES[challenge.k] ?? ARCHETYPES.navigator).emoji} {(ARCHETYPES[challenge.k] ?? ARCHETYPES.navigator).name}.
+            {t('{who} scored {s}/100 as {arch}.', { who: challenge.n || t('A colleague'), s: challenge.s, arch: `${(ARCHETYPES[challenge.k] ?? ARCHETYPES.navigator).emoji} ${t((ARCHETYPES[challenge.k] ?? ARCHETYPES.navigator).name)}` })}
           </div>
-          <div className="text-sm text-white/70">You get the exact same questions. Score to beat: {challenge.s}.</div>
+          <div className="text-sm text-white/70">{t('You get the exact same questions. Score to beat: {s}.', { s: challenge.s })}</div>
         </div>
       )}
-      <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/80">Free · 15 questions · ~3 minutes · no signup</span>
+      <span className="inline-flex rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/80">{t("Free · 15 questions · ~3 minutes · no signup")}</span>
       <h1 className="mt-6 text-4xl font-extrabold tracking-tight sm:text-5xl">
-        What's your <span className="grad-text">PM Judgment Score?</span>
+        {t("What's your")} <span className="grad-text">{t("PM Judgment Score?")}</span>
       </h1>
       <p className="mx-auto mt-5 max-w-xl text-lg text-white/75">
-        Knowing the answer is half of it. The other half is knowing <em>how sure</em> you should be, and that is what product decisions run on.
+        {t("Knowing the answer is half of it. The other half is knowing")} <em>{t("how sure")}</em> {t("you should be, and that is what product decisions run on.")}
       </p>
-      <div className="mx-auto mt-10 grid max-w-2xl gap-3 text-left sm:grid-cols-3">
+      <div className="mx-auto mt-10 grid max-w-2xl gap-3 text-start sm:grid-cols-3">
         {[
-          ['1', 'Pick an answer', 'Real facts about famous pivots, launches and acquisitions.'],
-          ['2', 'Set your confidence', '50% = pure guess, 100% = certain.'],
-          ['3', 'Get calibrated', 'Brier-based score, your bias, your archetype.'],
-        ].map(([n, t, b]) => (
+          ['1', t('Pick an answer'), t('Real facts about famous pivots, launches and acquisitions.')],
+          ['2', t('Set your confidence'), t('50% = pure guess, 100% = certain.')],
+          ['3', t('Get calibrated'), t('Brier-based score, your bias, your archetype.')],
+        ].map(([n, ti, b]) => (
           <div key={n} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <div className="text-sm font-bold text-brand-300">Step {n}</div>
-            <div className="mt-1 font-semibold">{t}</div>
-            <div className="mt-1 text-sm text-white/60">{b}</div>
+            <div className="text-sm font-bold text-brand-300">{t('Step {n}', { n })}</div>
+            <div className="mt-1 font-semibold">{t(ti)}</div>
+            <div className="mt-1 text-sm text-white/60">{t(b)}</div>
           </div>
         ))}
       </div>
       <div className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row">
-        <label htmlFor="nm" className="sr-only">Your name (optional, shown on your card)</label>
-        <input id="nm" value={name} onChange={(e) => setName(e.target.value.slice(0, 40))} placeholder="Your name (optional, for your card)" className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white placeholder:text-white/40 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/40" />
-        <Button size="lg" variant="light" onClick={() => onStart()} className="shrink-0">{challenge ? `Beat ${challenge.s} →` : 'Start the test →'}</Button>
+        <label htmlFor="nm" className="sr-only">{t("Your name (optional, shown on your card)")}</label>
+        <input id="nm" value={name} onChange={(e) => setName(e.target.value.slice(0, 40))} placeholder={t("Your name (optional, for your card)")} className="w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white placeholder:text-white/40 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/40" />
+        <Button size="lg" variant="light" onClick={() => onStart()} className="shrink-0">{challenge ? t('Beat {s} →', { s: challenge.s }) : t('Start the test →')}</Button>
       </div>
       {!challenge && <PackPicker spec={spec} setSpec={setSpec} />}
-      <p className="mt-4 text-xs text-white/45">Every answer comes with its source. Nothing leaves your browser.</p>
+      <p className="mt-4 text-xs text-white/45">{t("Every answer comes with its source. Nothing leaves your browser.")}</p>
     </section>
   )
 }
@@ -189,18 +191,18 @@ function Question({
   onNext: () => void
 }) {
   const fill = ((conf - 50) / 50) * 100
-  const confWord = conf <= 55 ? 'Pure guess' : conf <= 65 ? 'Leaning' : conf <= 75 ? 'Fairly sure' : conf <= 85 ? 'Confident' : conf <= 95 ? 'Very confident' : 'Certain'
+  const confWord = t(conf <= 55 ? 'Pure guess' : conf <= 65 ? 'Leaning' : conf <= 75 ? 'Fairly sure' : conf <= 85 ? 'Confident' : conf <= 95 ? 'Very confident' : 'Certain')
   return (
     <section className="rise pt-6" aria-labelledby="qtext">
       <div className="flex items-center justify-between text-sm text-white/60">
-        <span>Question {index + 1} of {total}</span>
-        <span className="hidden sm:inline">Keys: 1 / 2 to choose, Enter for next</span>
+        <span>{t('Question {i} of {n}', { i: index + 1, n: total })}</span>
+        <span className="hidden sm:inline">{t("Keys: 1 / 2 to choose, Enter for next")}</span>
       </div>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10" role="progressbar" aria-valuenow={index} aria-valuemin={0} aria-valuemax={total} aria-label="Progress">
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10" role="progressbar" aria-valuenow={index} aria-valuemin={0} aria-valuemax={total} aria-label={t("Progress")}>
         <div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-cyan-400 transition-all" style={{ width: `${(index / total) * 100}%` }} />
       </div>
-      <h2 id="qtext" className="mt-8 text-2xl font-bold leading-snug sm:text-3xl">{shown.q.prompt}</h2>
-      <div className="mt-6 grid gap-3" role="radiogroup" aria-label="Answer options">
+      <h2 id="qtext" className="mt-8 text-2xl font-bold leading-snug sm:text-3xl">{lq(shown.q).prompt}</h2>
+      <div className="mt-6 grid gap-3" role="radiogroup" aria-label={t("Answer options")}>
         {shown.order.map((optIdx, k) => (
           <button
             key={optIdx}
@@ -208,26 +210,26 @@ function Question({
             aria-checked={choice === k}
             onClick={() => setChoice(k)}
             className={cx(
-              'focus-ring flex items-center gap-4 rounded-2xl border px-5 py-4 text-left text-base font-semibold transition sm:text-lg',
+              'focus-ring flex items-center gap-4 rounded-2xl border px-5 py-4 text-start text-base font-semibold transition sm:text-lg',
               choice === k ? 'border-brand-400 bg-brand-500/25 ring-2 ring-brand-400' : 'border-white/15 bg-white/5 hover:bg-white/10',
             )}
           >
             <span className={cx('flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold', choice === k ? 'bg-brand-500 text-white' : 'bg-white/10 text-white/70')}>{k === 0 ? 'A' : 'B'}</span>
-            {shown.q.options[optIdx]}
+            {lq(shown.q).options[optIdx]}
           </button>
         ))}
       </div>
 
       <div className={cx('mt-8 rounded-2xl border border-white/10 bg-white/5 p-5 transition', choice === null && 'opacity-50')}>
         <div className="flex items-baseline justify-between">
-          <label htmlFor="conf" className="font-semibold">How sure are you?</label>
-          <div className="text-right">
+          <label htmlFor="conf" className="font-semibold">{t("How sure are you?")}</label>
+          <div className="text-end">
             <span className="text-3xl font-extrabold tabular-nums">{conf}%</span>
-            <span className="ml-2 text-sm text-white/60">{confWord}</span>
+            <span className="ms-2 text-sm text-white/60">{confWord}</span>
           </div>
         </div>
-        <input id="conf" type="range" min={50} max={100} step={5} value={conf} onChange={(e) => setConf(+e.target.value)} disabled={choice === null} className="conf mt-4 w-full" style={{ ['--fill' as string]: `${fill}%` }} aria-valuetext={`${conf}% – ${confWord}`} />
-        <div className="mt-3 flex justify-between gap-1">
+        <input id="conf" type="range" min={50} max={100} step={5} value={conf} onChange={(e) => setConf(+e.target.value)} disabled={choice === null} className="conf mt-4 w-full" dir="ltr" style={{ ['--fill' as string]: `${fill}%` }} aria-valuetext={`${conf}% – ${confWord}`} />
+        <div className="mt-3 flex justify-between gap-1" dir="ltr">
           {CONF_STEPS.map((c) => (
             <button key={c} disabled={choice === null} onClick={() => setConf(c)} className={cx('focus-ring rounded-lg px-2 py-1 text-xs font-semibold tabular-nums sm:px-3', conf === c ? 'bg-white text-ink' : 'bg-white/10 text-white/70 hover:bg-white/20')}>{c}%</button>
           ))}
@@ -236,7 +238,7 @@ function Question({
 
       <div className="mt-6 flex justify-end">
         <Button size="lg" variant="light" disabled={choice === null} onClick={onNext}>
-          {index + 1 === total ? 'See my score' : 'Next'} →
+          {index + 1 === total ? t('See my score') : t('Next')} →
         </Button>
       </div>
     </section>
@@ -246,10 +248,10 @@ function Question({
 function biasCopy(r: QuizResult) {
   const g = Math.round(r.gap)
   if (r.bias === 'overconfident')
-    return `On average you were ${Math.round(r.meanConfidence * 100)}% confident but right ${Math.round(r.accuracy * 100)}% of the time, ${g} points of overconfidence. On a roadmap, that turns into bets you defend longer than the evidence supports.`
+    return t('On average you were {c}% confident but right {a}% of the time, {g} points of overconfidence. On a roadmap, that turns into bets you defend longer than the evidence supports.', { c: Math.round(r.meanConfidence * 100), a: Math.round(r.accuracy * 100), g })
   if (r.bias === 'underconfident')
-    return `You were right ${Math.round(r.accuracy * 100)}% of the time but only ${Math.round(r.meanConfidence * 100)}% confident on average, ${Math.abs(g)} points of underconfidence. You're leaving good calls on the table.`
-  return `Your average confidence (${Math.round(r.meanConfidence * 100)}%) is within ${Math.abs(g)} points of your accuracy (${Math.round(r.accuracy * 100)}%). Your "how sure am I" signal is trustworthy, and that's the hard part.`
+    return t("You were right {a}% of the time but only {c}% confident on average, {g} points of underconfidence. You're leaving good calls on the table.", { c: Math.round(r.meanConfidence * 100), a: Math.round(r.accuracy * 100), g: Math.abs(g) })
+  return t('Your average confidence ({c}%) is within {g} points of your accuracy ({a}%). Your "how sure am I" signal is trustworthy, and that\'s the hard part.', { c: Math.round(r.meanConfidence * 100), a: Math.round(r.accuracy * 100), g: Math.abs(g) })
 }
 
 function ChallengeBox({ payload }: { payload: SharePayload }) {
@@ -257,11 +259,11 @@ function ChallengeBox({ payload }: { payload: SharePayload }) {
   const ch = toChallenge(payload)
   if (!ch) return null
   const url = appUrl(`/c/${encodeShare(ch)}`)
-  const text = `I scored ${payload.s}/100 on the PM Judgment Score. Same 15 questions, can you beat me?`
+  const text = t('I scored {s}/100 on the PM Judgment Score. Same 15 questions, can you beat me?', { s: payload.s })
   const copy = async () => {
     const full = `${text} ${url}`
     try {
-      if (navigator.share) await navigator.share({ title: 'PM Judgment Score challenge', text, url })
+      if (navigator.share) await navigator.share({ title: t('PM Judgment Score challenge'), text, url })
       else await navigator.clipboard.writeText(full)
       setCopied(true)
     } catch {
@@ -269,7 +271,7 @@ function ChallengeBox({ payload }: { payload: SharePayload }) {
         await navigator.clipboard.writeText(full)
         setCopied(true)
       } catch {
-        window.prompt('Copy this challenge link', full)
+        window.prompt(t('Copy this challenge link'), full)
       }
     }
     setTimeout(() => setCopied(false), 2500)
@@ -277,10 +279,10 @@ function ChallengeBox({ payload }: { payload: SharePayload }) {
   return (
     <div className="mt-6 flex flex-col items-center justify-between gap-3 rounded-2xl border border-cyan-300/25 bg-cyan-400/10 p-5 sm:flex-row">
       <div>
-        <div className="font-bold">⚔️ Challenge a colleague</div>
-        <div className="text-sm text-white/70">They get your exact questions and see your score to beat: {payload.s}.</div>
+        <div className="font-bold">{t("⚔️ Challenge a colleague")}</div>
+        <div className="text-sm text-white/70">{t('They get your exact questions and see your score to beat: {s}.', { s: payload.s })}</div>
       </div>
-      <Button variant="light" onClick={copy} aria-live="polite" className="shrink-0">{copied ? 'Challenge link copied ✓' : 'Copy challenge link'}</Button>
+      <Button variant="light" onClick={copy} aria-live="polite" className="shrink-0">{copied ? t('Challenge link copied ✓') : t('Copy challenge link')}</Button>
     </div>
   )
 }
@@ -292,15 +294,15 @@ function Results({ answers, round, name, spec, challenge, onRetake }: { answers:
   const payload: SharePayload = { s: r.score, a: Math.round(r.accuracy * 100), g: r.gap, k: r.archetype.key, c: r.correct, t: r.total, sd: spec.seed, ...(spec.cat ? { cat: spec.cat } : {}), ...(name.trim() ? { n: name.trim() } : {}) }
   const vs = challenge ? { n: challenge.n, s: challenge.s } : undefined
   const url = appUrl(`/s/${encodeShare(payload)}`)
-  const text = shareText({ s: r.score, emoji: r.archetype.emoji, name: r.archetype.name }, vs)
+  const text = shareText({ s: r.score, emoji: r.archetype.emoji, name: t(r.archetype.name) }, vs)
   const buckets = calibrationBuckets(answers.map(answerToForecast), [0.5, 0.6, 0.7, 0.8, 0.9, 1])
 
   return (
     <section className="rise pt-6">
       <h1 className="text-center text-3xl font-extrabold tracking-tight sm:text-4xl">
-        {vs ? (r.score > vs.s ? `You beat ${vs.n || 'your colleague'}! 🏆` : r.score === vs.s ? `Dead heat with ${vs.n || 'your colleague'} 🤝` : `${vs.n || 'Your colleague'} wins this round`) : 'Your PM Judgment Score'}
+        {vs ? (r.score > vs.s ? t('You beat {who}! 🏆', { who: vs.n || t('your colleague') }) : r.score === vs.s ? t('Dead heat with {who} 🤝', { who: vs.n || t('your colleague') }) : t('{who} wins this round', { who: vs.n || t('Your colleague') })) : t('Your PM Judgment Score')}
       </h1>
-      <p className="mt-2 text-center text-white/60">{r.label}</p>
+      <p className="mt-2 text-center text-white/60">{t(r.label)}</p>
       <div className="mt-8 flex justify-center">
         <ResultCard ref={cardRef} r={payload} vs={vs} />
       </div>
@@ -314,35 +316,35 @@ function Results({ answers, round, name, spec, challenge, onRetake }: { answers:
 
       <div className="mt-10 grid gap-4 md:grid-cols-2">
         <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-          <h2 className="font-bold">What your score means</h2>
+          <h2 className="font-bold">{t("What your score means")}</h2>
           <p className="mt-2 text-sm leading-relaxed text-white/70">
-            Your score is based on the <strong>Brier score</strong> ({r.brier.toFixed(3)}), the average squared gap between your confidence and reality. <strong>100</strong> is perfect. <strong>50</strong> is what you'd get by answering 50% every time. Being 100% sure and wrong costs the most.
+            {t("Your score is based on the Brier score ({b}), the average squared gap between your confidence and reality. 100 is perfect. 50 is what you'd get by answering 50% every time. Being 100% sure and wrong costs the most.", { b: r.brier.toFixed(3) })}
           </p>
-          <h3 className="mt-4 font-bold">{r.archetype.emoji} {r.archetype.name}</h3>
-          <p className="mt-1 text-sm leading-relaxed text-white/70">{r.archetype.description}</p>
-          <h3 className="mt-4 font-bold capitalize">{r.bias}</h3>
+          <h3 className="mt-4 font-bold">{r.archetype.emoji} {t(r.archetype.name)}</h3>
+          <p className="mt-1 text-sm leading-relaxed text-white/70">{t(r.archetype.description)}</p>
+          <h3 className="mt-4 font-bold capitalize">{t(r.bias)}</h3>
           <p className="mt-1 text-sm leading-relaxed text-white/70">{biasCopy(r)}</p>
         </div>
         <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-          <h2 className="font-bold">Your calibration</h2>
-          <CalibrationChart buckets={buckets} domain={[0.5, 1]} dark height={240} title="Quiz calibration" />
+          <h2 className="font-bold">{t("Your calibration")}</h2>
+          <CalibrationChart buckets={buckets} domain={[0.5, 1]} dark height={240} title={t("Quiz calibration")} />
         </div>
       </div>
 
       <div className="mt-6 rounded-2xl bg-gradient-to-br from-brand-600 to-cyan-600 p-6 sm:p-8">
-        <h2 className="text-2xl font-extrabold">Trivia is the warm-up. Your roadmap is the real test.</h2>
-        <p className="mt-2 max-w-2xl text-white/85">Put probabilities on your actual initiatives, add kill criteria, and build a judgment track record you can show your manager. Free, in your browser.</p>
+        <h2 className="text-2xl font-extrabold">{t("Trivia is the warm-up. Your roadmap is the real test.")}</h2>
+        <p className="mt-2 max-w-2xl text-white/85">{t("Put probabilities on your actual initiatives, add kill criteria, and build a judgment track record you can show your manager. Free, in your browser.")}</p>
         <div className="mt-5 flex flex-wrap gap-3">
-          <LinkButton to={data.settings.onboardedAt ? '/app/bets?new=1' : '/start'} variant="light">{data.settings.onboardedAt ? 'Log a real bet →' : 'Next: create your first bet (60s) →'}</LinkButton>
-          <Button variant="ghost" className="text-white hover:bg-white/10" onClick={onRetake}>Retake with a new mix</Button>
+          <LinkButton to={data.settings.onboardedAt ? '/app/bets?new=1' : '/start'} variant="light">{data.settings.onboardedAt ? t('Log a real bet →') : t('Next: create your first bet (60s) →')}</LinkButton>
+          <Button variant="ghost" className="text-white hover:bg-white/10" onClick={onRetake}>{t("Retake with a new mix")}</Button>
         </div>
       </div>
 
       <details className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-5" open>
-        <summary className="cursor-pointer font-bold">Review answers & sources</summary>
+        <summary className="cursor-pointer font-bold">{t("Review answers & sources")}</summary>
         <ol className="mt-4 space-y-4">
           {answers.map((a, idx) => {
-            const q = round.find((x) => x.q.id === a.questionId)!.q
+            const q = lq(round.find((x) => x.q.id === a.questionId)!.q)
             return (
               <li key={a.questionId} className="rounded-xl bg-black/20 p-4">
                 <div className="flex items-start justify-between gap-3">
@@ -352,18 +354,18 @@ function Results({ answers, round, name, spec, challenge, onRetake }: { answers:
                   </span>
                 </div>
                 <div className="mt-1 text-sm text-white/70">
-                  Answer: <strong className="text-white">{q.options[0]}</strong>
-                  {!a.correct && <> · you said “{q.options[a.chosen]}”</>}
+                  {t("Answer:")} <strong className="text-white">{q.options[0]}</strong>
+                  {!a.correct && <> {t('· you said “{x}”', { x: q.options[a.chosen] })}</>}
                 </div>
                 <p className="mt-1 text-sm text-white/60">{q.explanation} <em className="text-brand-200">{q.lesson}</em></p>
-                <a href={q.source.url} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block text-xs text-cyan-300 underline-offset-2 hover:underline">Source: {q.source.title} ↗</a>
+                <a href={q.source.url} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block text-xs text-cyan-300 underline-offset-2 hover:underline">{t('Source: {s}', { s: q.source.title })} ↗</a>
               </li>
             )
           })}
         </ol>
       </details>
       <p className="mt-6 text-center text-xs text-white/40">
-        <Link to="/" className="hover:text-white">BetBoard</Link> · Calibration training for product people
+        <Link to="/" className="hover:text-white">{t("BetBoard")}</Link> {t("· Calibration training for product people")}
       </p>
     </section>
   )

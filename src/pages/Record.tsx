@@ -1,3 +1,5 @@
+import { todayISO } from '../lib/format'
+import { t } from '../lib/i18n'
 import { useState } from 'react'
 import { PageHeader } from '../components/AppShell'
 import { RecordView } from '../components/RecordView'
@@ -13,7 +15,7 @@ export default function Record() {
   const p = toPayload(st, data.bets, data.settings.displayName, data.constitution.company)
   const url = appUrl('/r/' + encodeShare(p))
   const [copied, setCopied] = useState(false)
-  const text = `My product-judgment track record: ${p.s}/100 across ${p.r + p.k} resolved bets (Brier ${p.b.toFixed(3)}). Every call is logged with a probability before the outcome. 📈`
+  const text = t('My product-judgment track record: {s}/100 across {n} resolved bets (Brier {b}). Every call is logged with a probability before the outcome. 📈', { s: p.s, n: p.r + p.k, b: p.b.toFixed(3) })
 
   const md = () => {
     const lines = [
@@ -29,7 +31,7 @@ export default function Record() {
       '|---|---|---|---|---|',
       ...data.bets.filter((b) => b.status !== 'open').map((b) => `| ${b.title} | ${Math.round(b.probability * 100)}% | ${b.metric} → ${b.target} | ${b.status === 'killed' ? 'killed' : b.outcome} | ${(b.learnings || '').replace(/\|/g, '/').replace(/\n/g, ' ')} |`),
       '',
-      `Generated with BetBoard · ${new Date().toISOString().slice(0, 10)}`,
+      `Generated with BetBoard · ${todayISO()}`,
     ]
     download('track-record.md', lines.join('\n'), 'text/markdown')
   }
@@ -43,29 +45,29 @@ export default function Record() {
   return (
     <>
       <PageHeader
-        title="Track record"
-        subtitle="Calibration you can prove, for performance reviews, promotion packets and interviews. Share a read-only snapshot. The data lives in the link, not on a server."
+        title={t("Track record")}
+        subtitle={t("Calibration you can prove, for performance reviews, promotion packets and interviews. Share a read-only snapshot. The data lives in the link, not on a server.")}
         actions={
           <div className="no-print flex flex-wrap gap-2">
-            <Button variant="secondary" size="sm" onClick={() => window.print()}>Print / PDF</Button>
-            <Button variant="secondary" size="sm" onClick={md}>Markdown</Button>
-            <Button variant="secondary" size="sm" onClick={csv}>CSV</Button>
+            <Button variant="secondary" size="sm" onClick={() => window.print()}>{t("Print / PDF")}</Button>
+            <Button variant="secondary" size="sm" onClick={md}>{t("Markdown")}</Button>
+            <Button variant="secondary" size="sm" onClick={csv}>{t("CSV")}</Button>
           </div>
         }
       />
       <RecordView p={p} />
       <section className="no-print card mt-4 p-5">
-        <h2 className="font-bold">Share your record</h2>
+        <h2 className="font-bold">{t("Share your record")}</h2>
         <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-          <label htmlFor="rec-url" className="sr-only">Share link</label>
+          <label htmlFor="rec-url" className="sr-only">{t("Share link")}</label>
           <input id="rec-url" readOnly className="input font-mono text-xs" value={url} onFocus={(e) => e.currentTarget.select()} />
-          <Button onClick={async () => { await navigator.clipboard?.writeText(url).catch(() => {}); setCopied(true); setTimeout(() => setCopied(false), 1800) }}>{copied ? 'Copied ✓' : 'Copy link'}</Button>
+          <Button onClick={async () => { await navigator.clipboard?.writeText(url).catch(() => {}); setCopied(true); setTimeout(() => setCopied(false), 1800) }}>{copied ? t('Copied ✓') : t('Copy link')}</Button>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          <a className="focus-ring rounded-xl bg-[#0a66c2] px-4 py-2 text-sm font-semibold text-white" href={linkedInShareUrl(text, url)} target="_blank" rel="noreferrer">Share on LinkedIn</a>
-          <a className="focus-ring rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white" href={xShareUrl(text, url)} target="_blank" rel="noreferrer">Post on X</a>
+          <a className="focus-ring rounded-xl bg-[#0a66c2] px-4 py-2 text-sm font-semibold text-white" href={linkedInShareUrl(text, url)} target="_blank" rel="noreferrer">{t("Share on LinkedIn")}</a>
+          <a className="focus-ring rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white" href={xShareUrl(text, url)} target="_blank" rel="noreferrer">{t("Post on X")}</a>
         </div>
-        <p className="mt-2 text-xs text-slate-500">The link contains only the summary and your last 12 bet titles, never your full ledger.</p>
+        <p className="mt-2 text-xs text-slate-500">{t("The link contains only the summary and your last 12 bet titles, never your full ledger.")}</p>
       </section>
     </>
   )

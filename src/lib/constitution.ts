@@ -1,3 +1,4 @@
+import { t } from './i18n'
 import type { Bet, Constitution, Principle } from './types'
 import { keywordsOf, mentions } from './text'
 
@@ -50,22 +51,22 @@ export function fitScore(bet: Partial<Bet>, c: Constitution): FitResult {
   let quality = 0
   const metric = (bet.metric || '').trim()
   if (metric.length >= 3) quality += 12
-  else flags.push({ level: 'error', text: 'No measurable success metric' })
+  else flags.push({ level: 'error', text: t('No measurable success metric') })
   if (hasNumber(bet.target)) quality += 10
-  else flags.push({ level: 'error', text: 'No numeric target: success is undefined' })
+  else flags.push({ level: 'error', text: t('No numeric target: success is undefined') })
   if ((bet.killCriteria || '').trim().length >= 8) quality += 10
-  else flags.push({ level: 'error', text: 'No kill criteria: this bet can never die' })
+  else flags.push({ level: 'error', text: t('No kill criteria: this bet can never die') })
   if (bet.reviewDate) quality += 4
-  else flags.push({ level: 'warn', text: 'No review date' })
+  else flags.push({ level: 'warn', text: t('No review date') })
   const p = bet.probability ?? 0.5
   if (p > 0.05 && p < 0.95) quality += 4
-  else flags.push({ level: 'warn', text: `Probability of ${Math.round(p * 100)}% is extreme. Is this really a bet?` })
+  else flags.push({ level: 'warn', text: t('Probability of {p}% is extreme. Is this really a bet?', { p: Math.round(p * 100) }) })
 
   const penalty = violations.reduce((a, v) => a + Math.min(40, v.principle.weight * 8), 0)
-  for (const v of violations) flags.unshift({ level: 'error', text: `Violates non-goal: “${v.principle.text}”` })
+  for (const v of violations) flags.unshift({ level: 'error', text: t('Violates non-goal: “{x}”', { x: v.principle.text }) })
   if (matched.length === 0 && c.principles.some((x) => x.kind !== 'nongoal'))
-    flags.unshift({ level: 'warn', text: 'Does not connect to any goal or principle' })
-  if (flags.length === 0) flags.push({ level: 'ok', text: 'Well-formed bet, aligned with strategy' })
+    flags.unshift({ level: 'warn', text: t('Does not connect to any goal or principle') })
+  if (flags.length === 0) flags.push({ level: 'ok', text: t('Well-formed bet, aligned with strategy') })
 
   const score = Math.max(0, Math.min(100, Math.round(alignment + quality - penalty)))
   return { score, alignment, quality, penalty, matched, violations, flags }

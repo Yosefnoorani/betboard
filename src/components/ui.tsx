@@ -1,3 +1,4 @@
+import { t } from '../lib/i18n'
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { useEffect, useId, useRef } from 'react'
 import { Link } from 'react-router-dom'
@@ -99,7 +100,7 @@ export function Modal({ open, onClose, title, children, wide }: { open: boolean;
       <div ref={ref} role="dialog" aria-modal="true" aria-label={title} className={cx('rise max-h-[92vh] w-full overflow-y-auto rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl', wide ? 'sm:max-w-4xl' : 'sm:max-w-lg')}>
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white/95 px-5 py-3 backdrop-blur">
           <h2 className="text-base font-bold">{title}</h2>
-          <button onClick={onClose} className="focus-ring rounded-lg p-1.5 text-slate-500 hover:bg-slate-100" aria-label="Close">
+          <button onClick={onClose} className="focus-ring rounded-lg p-1.5 text-slate-500 hover:bg-slate-100" aria-label={t("Close")}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 6l12 12M18 6L6 18" /></svg>
           </button>
         </div>
@@ -124,7 +125,7 @@ export function Logo({ light }: { light?: boolean }) {
         <path d="M14 46 L26 34 L34 40 L50 20" stroke="#fff" strokeWidth="6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         <circle cx="50" cy="20" r="5" fill="#fff" />
       </svg>
-      <span className={light ? 'text-white' : 'text-ink'}>BetBoard</span>
+      <span className={light ? 'text-white' : 'text-ink'}>{t("BetBoard")}</span>
     </span>
   )
 }

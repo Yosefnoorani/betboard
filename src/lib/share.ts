@@ -1,3 +1,4 @@
+import { t } from './i18n'
 /** Compact, URL-safe encoding of small JSON payloads for share links (no backend). */
 export function encodeShare(obj: unknown): string {
   const json = JSON.stringify(obj)
@@ -65,12 +66,12 @@ export function decodeChallenge(s: string | null | undefined): ChallengePayload 
 /** Short, memorable share copy. */
 export function shareText(p: { s: number; emoji: string; name: string }, vs?: { n?: string; s: number }): string {
   if (vs) {
-    const who = vs.n || 'my colleague'
+    const who = vs.n || t('my colleague')
     return p.s > vs.s
-      ? `Beat ${who} on the PM Judgment Score: ${p.s} vs ${vs.s} ${p.emoji}. Your turn:`
+      ? t('Beat {who} on the PM Judgment Score: {s} vs {v} {e}. Your turn:', { who, s: p.s, v: vs.s, e: p.emoji })
       : p.s === vs.s
-        ? `Tied ${who} on the PM Judgment Score at ${p.s} ${p.emoji}. Break the tie:`
-        : `${who} beat me on the PM Judgment Score (${vs.s} vs ${p.s}). Can you?`
+        ? t('Tied {who} on the PM Judgment Score at {s} {e}. Break the tie:', { who, s: p.s, e: p.emoji })
+        : t('{who} beat me on the PM Judgment Score ({v} vs {s}). Can you?', { who, s: p.s, v: vs.s })
   }
-  return `My PM Judgment Score: ${p.s}/100 ${p.emoji} ${p.name}. Beat me in 3 minutes:`
+  return t('My PM Judgment Score: {s}/100 {e} {name}. Beat me in 3 minutes:', { s: p.s, e: p.emoji, name: p.name })
 }

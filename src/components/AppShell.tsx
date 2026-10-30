@@ -1,8 +1,10 @@
+import { t } from '../lib/i18n'
 import type { ReactNode } from 'react'
 import { NavLink, Outlet, Link } from 'react-router-dom'
 import { useData, startFresh } from '../lib/store'
 import { Button, Logo } from './ui'
 import { cx } from '../lib/format'
+import { LangToggle } from './LangToggle'
 
 const NAV = [
   { to: '/app', label: 'Dashboard', end: true, icon: 'M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z' },
@@ -24,21 +26,22 @@ export default function AppShell() {
   const data = useData()
   return (
     <div className="min-h-screen bg-slate-50">
-      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">Skip to content</a>
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-slate-200 bg-white px-3 py-4 lg:flex">
+      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:start-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">{t("Skip to content")}</a>
+      <aside className="fixed inset-y-0 start-0 z-30 hidden w-60 flex-col border-e border-slate-200 bg-white px-3 py-4 lg:flex">
         <Link to="/" className="focus-ring mb-6 rounded-lg px-2"><Logo /></Link>
-        <nav className="flex flex-1 flex-col gap-1" aria-label="App">
+        <nav className="flex flex-1 flex-col gap-1" aria-label={t("App")}>
           {NAV.map((n) => (
             <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => cx('focus-ring flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition', isActive ? 'bg-brand-50 text-brand-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900')}>
               <Icon d={n.icon} />
-              {n.label}
+              {t(n.label)}
             </NavLink>
           ))}
         </nav>
+        <LangToggle className="mb-2 self-start" />
         <Link to="/test" className="focus-ring mt-4 rounded-2xl bg-gradient-to-br from-brand-600 to-cyan-500 p-4 text-white shadow-lg shadow-brand-600/20">
-          <div className="text-xs font-semibold uppercase tracking-wide text-white/80">Free · 3 min</div>
-          <div className="mt-1 text-sm font-bold">What's your PM Judgment Score?</div>
-          <div className="mt-2 text-xs text-white/80">Take the test →</div>
+          <div className="text-xs font-semibold uppercase tracking-wide text-white/80">{t("Free · 3 min")}</div>
+          <div className="mt-1 text-sm font-bold">{t("What's your PM Judgment Score?")}</div>
+          <div className="mt-2 text-xs text-white/80">{t("Take the test →")}</div>
         </Link>
       </aside>
 
@@ -46,23 +49,23 @@ export default function AppShell() {
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur lg:hidden">
         <div className="flex items-center justify-between px-4 py-3">
           <Link to="/" className="focus-ring rounded-lg"><Logo /></Link>
-          <Link to="/test" className="text-sm font-semibold text-brand-700">Free test</Link>
+          <div className="flex items-center gap-1"><LangToggle /><Link to="/test" className="text-sm font-semibold text-brand-700">{t("Free test")}</Link></div>
         </div>
-        <nav className="flex gap-1 overflow-x-auto px-2 pb-2" aria-label="App">
+        <nav className="flex gap-1 overflow-x-auto px-2 pb-2" aria-label={t("App")}>
           {NAV.map((n) => (
             <NavLink key={n.to} to={n.to} end={n.end} className={({ isActive }) => cx('whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium', isActive ? 'bg-brand-50 text-brand-700' : 'text-slate-600')}>
-              {n.label}
+              {t(n.label)}
             </NavLink>
           ))}
         </nav>
       </header>
 
-      <div className="lg:pl-60">
+      <div className="lg:ps-60">
         {data.isDemo && (
           <div className="no-print border-b border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-900">
             <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
-              <span><strong>Demo workspace.</strong> You're looking at sample bets for a fictional company. Explore freely: everything is stored only in your browser.</span>
-              <Button size="sm" variant="secondary" onClick={() => confirm('Clear the demo data and start with an empty ledger?') && startFresh()}>Start my own ledger</Button>
+              <span><strong>{t("Demo workspace.")}</strong> {t("You're looking at sample bets for a fictional company. Explore freely: everything is stored only in your browser.")}</span>
+              <Button size="sm" variant="secondary" onClick={() => confirm(t('Clear the demo data and start with an empty ledger?')) && startFresh()}>{t("Start my own ledger")}</Button>
             </div>
           </div>
         )}

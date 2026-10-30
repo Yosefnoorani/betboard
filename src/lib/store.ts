@@ -1,3 +1,4 @@
+import { t } from './i18n'
 import { useSyncExternalStore } from 'react'
 import type { AppData } from './types'
 import { DEFAULT_SETTINGS, EMPTY_CONSTITUTION, demoData } from './demo'
@@ -69,7 +70,7 @@ export function exportJSON(): string {
 
 export function importJSON(text: string) {
   const parsed = JSON.parse(text)
-  if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.bets)) throw new Error('Not a BetBoard export file')
+  if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.bets)) throw new Error(t('Not a BetBoard export file'))
   setData(() => normalize({ ...parsed, isDemo: false }))
 }
 

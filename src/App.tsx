@@ -12,6 +12,7 @@ import SharedRecord from './pages/SharedRecord'
 import SettingsPage from './pages/Settings'
 import NotFound from './pages/NotFound'
 import Onboarding from './pages/Onboarding'
+import { useLang } from './lib/i18n'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -22,6 +23,8 @@ function ScrollToTop() {
 }
 
 export default function App() {
+  // re-render the whole tree when the language changes (state such as an in-progress quiz is kept)
+  useLang()
   return (
     <>
       <ScrollToTop />

@@ -1,3 +1,4 @@
+import { t } from '../lib/i18n'
 import { ARCHETYPES } from '../lib/scoring'
 import type { QuizRecord } from '../lib/types'
 import { cx } from '../lib/format'
@@ -16,10 +17,10 @@ export function ArchetypeMap({ mine, friend, history = [], dark = true }: { mine
   return (
     <section className={cx('rounded-2xl border p-5', dark ? 'border-white/10 bg-white/5' : 'border-slate-200 bg-white')} aria-labelledby="arch-h">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="arch-h" className="font-bold">The six PM archetypes</h2>
+        <h2 id="arch-h" className="font-bold">{t("The six PM archetypes")}</h2>
         {history.length > 0 && (
           <div className={cx('text-xs', dark ? 'text-white/60' : 'text-slate-500')}>
-            Your best: <strong className={dark ? 'text-white' : 'text-ink'}>{best}</strong> · tests taken: {history.length} · collected {collected}/6
+            {t("Your best:")} <strong className={dark ? 'text-white' : 'text-ink'}>{best}</strong> {t("· tests taken:")} {history.length} {t("· collected")} {collected}/6
           </div>
         )}
       </div>
@@ -39,19 +40,19 @@ export function ArchetypeMap({ mine, friend, history = [], dark = true }: { mine
             >
               <div className="flex items-center gap-2">
                 <span className="text-2xl" aria-hidden>{a.emoji}</span>
-                <span className="text-sm font-bold leading-tight">{a.name}</span>
+                <span className="text-sm font-bold leading-tight">{t(a.name)}</span>
               </div>
-              <p className={cx('mt-1 text-xs leading-snug', dark ? 'text-white/60' : 'text-slate-500')}>{a.tagline}</p>
+              <p className={cx('mt-1 text-xs leading-snug', dark ? 'text-white/60' : 'text-slate-500')}>{t(a.tagline)}</p>
               <div className="mt-2 flex flex-wrap gap-1">
-                {isMine && <span className="rounded-md bg-brand-500 px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">You</span>}
-                {isFriend && <span className="rounded-md bg-cyan-500 px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">{friend?.n || 'Challenger'}</span>}
-                {seen.has(k) && !isMine && <span className={cx('rounded-md px-1.5 py-0.5 text-[10px] font-semibold', dark ? 'bg-white/10 text-white/70' : 'bg-slate-200 text-slate-600')}>Seen ×{seen.get(k)}</span>}
+                {isMine && <span className="rounded-md bg-brand-500 px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">{t("You")}</span>}
+                {isFriend && <span className="rounded-md bg-cyan-500 px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">{friend?.n || t('Challenger')}</span>}
+                {seen.has(k) && !isMine && <span className={cx('rounded-md px-1.5 py-0.5 text-[10px] font-semibold', dark ? 'bg-white/10 text-white/70' : 'bg-slate-200 text-slate-600')}>{t('Seen ×{n}', { n: seen.get(k) ?? 0 })}</span>}
               </div>
             </li>
           )
         })}
       </ul>
-      <p className={cx('mt-3 text-xs', dark ? 'text-white/45' : 'text-slate-400')}>Your archetype comes from accuracy × confidence gap. Retake a different pack, or challenge a colleague and compare.</p>
+      <p className={cx('mt-3 text-xs', dark ? 'text-white/45' : 'text-slate-400')}>{t("Your archetype comes from accuracy × confidence gap. Retake a different pack, or challenge a colleague and compare.")}</p>
     </section>
   )
 }
