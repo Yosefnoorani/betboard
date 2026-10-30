@@ -333,7 +333,7 @@ function Results({ answers, round, name, spec, challenge, onRetake }: { answers:
         <h2 className="text-2xl font-extrabold">Trivia is the warm-up. Your roadmap is the real test.</h2>
         <p className="mt-2 max-w-2xl text-white/85">Put probabilities on your actual initiatives, add kill criteria, and build a judgment track record you can show your manager. Free, in your browser.</p>
         <div className="mt-5 flex flex-wrap gap-3">
-          <LinkButton to="/app/bets" variant="light">Start my Bet Ledger →</LinkButton>
+          <LinkButton to={data.settings.onboardedAt ? '/app/bets?new=1' : '/start'} variant="light">{data.settings.onboardedAt ? 'Log a real bet →' : 'Next: create your first bet (60s) →'}</LinkButton>
           <Button variant="ghost" className="text-white hover:bg-white/10" onClick={onRetake}>Retake with a new mix</Button>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { SiteFooter, SiteNav } from '../components/SiteNav'
 import { Button, LinkButton, ScoreRing } from '../components/ui'
 import { cx } from '../lib/format'
@@ -110,9 +111,9 @@ export default function Landing({ scrollTo }: { scrollTo?: string }) {
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <LinkButton to="/test" variant="light" size="lg">Get your PM Judgment Score, free →</LinkButton>
-              <LinkButton to="/app" size="lg" className="bg-white/10 hover:bg-white/20 shadow-none">See the demo ledger</LinkButton>
+              <LinkButton to="/start" size="lg" className="bg-white/10 hover:bg-white/20 shadow-none">Set up in 60 seconds</LinkButton>
             </div>
-            <p className="mt-4 text-sm text-white/55">15 questions · 3 minutes · no signup</p>
+            <p className="mt-4 text-sm text-white/55">15 questions · 3 minutes · no signup · <Link to="/app" className="underline hover:text-white">or explore the demo ledger</Link></p>
           </div>
 
           <div className="rise relative mx-auto w-full max-w-sm" style={{ animationDelay: '.1s' }} aria-hidden>

@@ -56,6 +56,10 @@ export interface Settings {
   weeklyCost: number
   currency: string
   displayName: string
+  /** ISO time the 60-second setup was completed */
+  onboardedAt?: string
+  /** UI language */
+  lang?: 'en' | 'he'
 }
 
 export interface QuizRecord {

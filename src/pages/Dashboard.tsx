@@ -29,6 +29,8 @@ export default function Dashboard() {
         actions={<LinkButton to="/app/bets?new=1">+ New bet</LinkButton>}
       />
 
+      {!data.settings.onboardedAt && <SetupChecklist />}
+
       <div className="grid gap-4 lg:grid-cols-[300px_1fr]">
         <section className="card flex flex-col items-center justify-center p-6 text-center" aria-label="Judgment score">
           <ScoreRing value={scored ? st.score : 0} size={150} label="Judgment" />
@@ -109,5 +111,35 @@ export default function Dashboard() {
         </div>
       </div>
     </>
+  )
+}
+
+function SetupChecklist() {
+  const data = useData()
+  const items = [
+    { done: data.quizHistory.length > 0, label: 'Find your calibration baseline', to: '/test' },
+    { done: !data.isDemo && data.bets.length > 0, label: 'Log your first real bet', to: '/start' },
+    { done: !data.isDemo && !!data.constitution.northStar, label: 'Write your product constitution', to: '/start' },
+  ]
+  const n = items.filter((i) => i.done).length
+  return (
+    <section className="card mb-4 flex flex-col gap-4 border-brand-200 bg-brand-50/60 p-5 md:flex-row md:items-center" aria-label="Setup checklist">
+      <div className="md:w-56">
+        <div className="text-xs font-bold uppercase tracking-wider text-brand-700">Setup · {n}/3</div>
+        <div className="mt-1 font-bold">{data.isDemo ? 'You are looking at demo data' : 'Finish your setup'}</div>
+      </div>
+      <ul className="flex flex-1 flex-col gap-2 sm:flex-row">
+        {items.map((i) => (
+          <li key={i.label} className="flex-1">
+            <Link to={i.to} className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium ${i.done ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-slate-200 bg-white hover:border-brand-400'}`}>
+              <span aria-hidden>{i.done ? '✓' : '○'}</span>
+              <span>{i.label}</span>
+              <span className="sr-only">{i.done ? '(done)' : '(to do)'}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <LinkButton to="/start">Start 60-second setup</LinkButton>
+    </section>
   )
 }

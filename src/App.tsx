@@ -11,6 +11,7 @@ import Record from './pages/Record'
 import SharedRecord from './pages/SharedRecord'
 import SettingsPage from './pages/Settings'
 import NotFound from './pages/NotFound'
+import Onboarding from './pages/Onboarding'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -27,6 +28,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/test" element={<Quiz />} />
+        <Route path="/start" element={<Onboarding />} />
         <Route path="/s/:data" element={<SharedResult />} />
         <Route path="/c/:data" element={<SharedResult mode="challenge" />} />
         <Route path="/r/:data" element={<SharedRecord />} />
