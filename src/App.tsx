@@ -1,18 +1,19 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import Landing from './pages/Landing'
 import Quiz from './pages/Quiz'
 import SharedResult from './pages/SharedResult'
-import AppShell from './components/AppShell'
-import Dashboard from './pages/Dashboard'
-import Bets from './pages/Bets'
-import ConstitutionPage from './pages/Constitution'
-import Record from './pages/Record'
-import SharedRecord from './pages/SharedRecord'
-import SettingsPage from './pages/Settings'
 import NotFound from './pages/NotFound'
-import Onboarding from './pages/Onboarding'
 import { useLang } from './lib/i18n'
+
+const AppShell = lazy(() => import('./components/AppShell'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Bets = lazy(() => import('./pages/Bets'))
+const ConstitutionPage = lazy(() => import('./pages/Constitution'))
+const Record = lazy(() => import('./pages/Record'))
+const SharedRecord = lazy(() => import('./pages/SharedRecord'))
+const SettingsPage = lazy(() => import('./pages/Settings'))
+const Onboarding = lazy(() => import('./pages/Onboarding'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -28,6 +29,7 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
+      <Suspense fallback={<div className="min-h-screen" aria-busy="true" />}>
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/test" element={<Quiz />} />
@@ -45,6 +47,7 @@ export default function App() {
         <Route path="/pricing" element={<Landing scrollTo="pricing" />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </Suspense>
     </>
   )
 }

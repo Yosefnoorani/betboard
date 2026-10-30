@@ -1,5 +1,4 @@
 import { t } from '../lib/i18n'
-import { toPng } from 'html-to-image'
 import { useState, type RefObject } from 'react'
 import { linkedInShareUrl, xShareUrl } from '../lib/share'
 import { Button } from './ui'
@@ -11,6 +10,7 @@ export function ShareActions({ cardRef, url, text, filename }: { cardRef: RefObj
     if (!cardRef.current) return
     setBusy(true)
     try {
+      const { toPng } = await import('html-to-image')
       const dataUrl = await toPng(cardRef.current, { pixelRatio: 2, cacheBust: true })
       const a = document.createElement('a')
       a.href = dataUrl

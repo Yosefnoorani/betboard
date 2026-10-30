@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import { HE } from '../i18n/he'
+import type { QuizHe } from '../i18n/quiz.he'
 
 export type Lang = 'en' | 'he'
 const KEY = 'betboard:lang'
@@ -24,8 +24,30 @@ function apply() {
 }
 apply()
 
+// Hebrew dictionaries are code-split so English visitors never download them.
+let dict: Record<string, string> | null = null
+let quizDict: Record<string, QuizHe> | null = null
+async function loadHe() {
+  if (dict) return
+  const [ui, quiz] = await Promise.all([import('../i18n/he'), import('../i18n/quiz.he')])
+  dict = ui.HE
+  quizDict = quiz.QUIZ_HE
+}
+/** Call before the first render so a saved Hebrew preference renders without an English flash. */
+export async function initLang() {
+  if (lang !== 'he') return
+  try {
+    await loadHe()
+  } catch {
+    lang = 'en'
+    apply()
+  }
+}
+export const quizHe = () => (lang === 'he' ? quizDict : null)
+
 export const getLang = () => lang
-export function setLang(l: Lang) {
+export async function setLang(l: Lang) {
+  if (l === 'he') await loadHe()
   lang = l
   try {
     localStorage.setItem(KEY, l)
@@ -51,7 +73,7 @@ export function useLang(): Lang {
  * always the fallback. `{name}` placeholders are filled from `vars`.
  */
 export function t(en: string, vars?: Record<string, string | number>): string {
-  const s = lang === 'he' ? (HE[en] ?? en) : en
+  const s = lang === 'he' ? (dict?.[en] ?? en) : en
   return vars ? s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : s
 }
 

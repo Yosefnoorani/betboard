@@ -8,7 +8,7 @@ export function LangToggle({ dark, className }: { dark?: boolean; className?: st
   return (
     <button
       type="button"
-      onClick={() => setLang(next)}
+      onClick={() => void setLang(next)}
       lang={next}
       aria-label={next === 'he' ? 'עברית (Switch to Hebrew)' : 'English (Switch to English)'}
       className={cx(
