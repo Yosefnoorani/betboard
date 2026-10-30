@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { PageHeader } from '../components/AppShell'
-import { RecordView, toPayload } from '../components/RecordView'
+import { RecordView } from '../components/RecordView'
+import { toPayload } from '../lib/record'
 import { Button } from '../components/ui'
 import { ledgerStats } from '../lib/ledger'
 import { appUrl, encodeShare, linkedInShareUrl, xShareUrl } from '../lib/share'

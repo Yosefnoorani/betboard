@@ -1,6 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { useEffect, useId, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { cx } from '../lib/format'
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'light'
 const variants: Record<Variant, string> = {
@@ -12,9 +13,6 @@ const variants: Record<Variant, string> = {
 }
 const sizes = { sm: 'px-3 py-1.5 text-sm', md: 'px-4 py-2 text-sm', lg: 'px-6 py-3 text-base' }
 
-export function cx(...c: (string | false | null | undefined)[]) {
-  return c.filter(Boolean).join(' ')
-}
 
 export function Button({
   variant = 'primary',
@@ -161,6 +159,3 @@ export function EmptyState({ title, body, action }: { title: string; body: strin
   )
 }
 
-export const pct = (x: number, digits = 0) => `${(x * 100).toFixed(digits)}%`
-export const money = (n: number, currency = 'USD') =>
-  new Intl.NumberFormat('en-US', { style: 'currency', currency, maximumFractionDigits: 0 }).format(n)

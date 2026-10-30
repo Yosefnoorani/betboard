@@ -1,6 +1,6 @@
 import type { Bucket } from '../lib/scoring'
 import type { Overload } from '../lib/constitution'
-import { cx } from './ui'
+import { cx } from '../lib/format'
 
 /** Calibration curve: x = stated probability, y = observed frequency. */
 export function CalibrationChart({

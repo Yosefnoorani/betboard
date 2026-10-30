@@ -1,6 +1,6 @@
 import { ARCHETYPES } from '../lib/scoring'
 import type { QuizRecord } from '../lib/types'
-import { cx } from './ui'
+import { cx } from '../lib/format'
 
 const ORDER = ['oracle', 'navigator', 'hotshot', 'hidden', 'visionary', 'skeptic']
 

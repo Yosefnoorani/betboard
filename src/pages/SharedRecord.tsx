@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { SiteNav } from '../components/SiteNav'
-import { RecordView, type RecordPayload } from '../components/RecordView'
+import { RecordView } from '../components/RecordView'
+import type { RecordPayload } from '../lib/record'
 import { LinkButton } from '../components/ui'
 import { decodeShare } from '../lib/share'
 

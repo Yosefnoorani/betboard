@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { LinkButton, Logo, cx } from './ui'
+import { LinkButton, Logo } from './ui'
+import { cx } from '../lib/format'
 
 export function SiteNav({ dark }: { dark?: boolean }) {
   return (

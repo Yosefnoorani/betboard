@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 import { NavLink, Outlet, Link } from 'react-router-dom'
 import { useData, startFresh } from '../lib/store'
-import { Button, Logo, cx } from './ui'
+import { Button, Logo } from './ui'
+import { cx } from '../lib/format'
 
 const NAV = [
   { to: '/app', label: 'Dashboard', end: true, icon: 'M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z' },

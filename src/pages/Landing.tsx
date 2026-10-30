@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { SiteFooter, SiteNav } from '../components/SiteNav'
-import { Button, LinkButton, ScoreRing, cx } from '../components/ui'
+import { Button, LinkButton, ScoreRing } from '../components/ui'
+import { cx } from '../lib/format'
 import { setData, useData } from '../lib/store'
 
 const PAINS = [

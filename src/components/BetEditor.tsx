@@ -3,31 +3,12 @@ import type { Bet } from '../lib/types'
 import { fitScore } from '../lib/constitution'
 import { heuristicAssist, llmAssist, type BetDraft } from '../lib/assist'
 import { setData, useData } from '../lib/store'
-import { addDays, todayISO, uid } from '../lib/text'
-import { Badge, Button, Modal, cx } from './ui'
+import { Badge, Button, Modal } from './ui'
+import { cx } from '../lib/format'
 import { FitPill } from './charts'
 
 const SAMPLE = `Add an AI "explain this chart" button for new teams. Customers asked for it in 6 interviews; they get stuck reading dashboards in week one. Should improve activation by 5%. Roughly 2 sprints for one squad.`
 
-export function blankBet(): Bet {
-  return {
-    id: uid(),
-    title: '',
-    hypothesis: '',
-    metric: '',
-    baseline: '',
-    target: '',
-    probability: 0.4,
-    killCriteria: '',
-    reviewDate: addDays(new Date(), 42),
-    cost: 4,
-    owner: '',
-    tags: [],
-    status: 'open',
-    learnings: '',
-    createdAt: todayISO(),
-  }
-}
 
 export function BetEditor({ open, onClose, initial }: { open: boolean; onClose: () => void; initial: Bet }) {
   const data = useData()
